@@ -1,17 +1,14 @@
-from django.shortcuts import render
-from django.views.generic.base import TemplateView
-from django.http import HttpResponse
+from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, authenticate
-from django.shortcuts import render, redirect
-from account.forms import SignUpForm
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from account import serializers
-from rest_framework.authtoken.models import Token
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
+from django.shortcuts import redirect, render
+from rest_framework import status
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from account import serializers
+from account.forms import SignUpForm
 
 
 @login_required
@@ -34,11 +31,7 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 
-# class SignupPageView(TemplateView):
-#     template_name = "signup.html"
-
-
-class RestAPIView(APIView):
+class GetUserInfo(APIView):
     serializer_class = serializers.RestSerializer
 
     def get(self, request, format=None):
@@ -85,23 +78,10 @@ class RestAPIView(APIView):
                              'active': active,
                              'staff': staff,
                              'is_superuser': is_superuser})
-        else:
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-    # def post(self, request, *args, **kwargs):
-    #     serializer = self.serializer_class(data=request.data,
-    #                                        context={'request': request})
-    #     serializer.is_valid(raise_exception=True)
-    #     user = serializer.validated_data['user']
-    #     token, created = Token.objects.get_or_create(user=user)
-    #     return Response({
-    #         'token': token.key,
-    #         'user': user.pk,
-    #         'email': user.email
-    #     })
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     def put(self, request, pk=None):
         return Response({'método': 'PUT'})

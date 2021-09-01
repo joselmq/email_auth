@@ -1,0 +1,27 @@
+{% block content %}
+  <div align="left">
+    <a href="create" type="button">Crear</a>
+  </div>
+  {% for company in object_list %}
+    {{ company.name }}
+    <form method="POST" action="delete/{{company.id}}">
+      {% csrf_token %}
+      <div class="btn-group">
+        <a href="details/{{company.id}}" title="Ver" type="button" >Ver </a>
+        <a href="update/{{company.id}}" title="Editar" type="button" >Editar </a>
+        <button class="btn btn-danger" onclick="return eliminar();" type="submit">Eliminar</button>
+      </div>
+    </form>
+
+  <script type="text/javascript">
+    function eliminar() {
+      var x = confirm("Eliminar empresa?");
+      if (x) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  </script>
+  {% endfor %}
+{% endblock %}
