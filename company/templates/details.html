@@ -1,7 +1,30 @@
 {% block content %}
-<h4>Información</h4>
-
-<p><span class="txt_negrita">Nombre:</span> <br> {{object.name}}</p>
-
-<a href="../" type="submit">Volver</a>
+  <h4>Información</h4>
+  <div align="left">
+    <a href="{{ company.id }}/create_invoice" type="button">Crear</a>
+  </div>
+  <p><span class="txt_negrita">Nombre:</span> <br> {{ object.name }}</p>
+  {% for c in object_list %}
+    {{ c.name }}
+    Hello world
+    {% for i in c.invoice_set.all %}
+      Hello there
+      <p><span class="txt_negrita">boleta:</span> <br> {{ i.name }}</p>
+      {{ c.name }}
+      {{ i.bill }}
+      <form method="POST" action="delete/{{ i.id }}">
+        {% csrf_token %}
+        <div>
+          <a href="update/{{ invoice.id }}" title="Editar" type="button" >Editar </a>
+          <button onclick="return eliminar();" type="submit">Eliminar</button>
+        </div>
+      </form>
+    {% endfor %}
+  {% endfor %}
+  <a href="{% url 'company' %}" type="submit">Volver</a>
+  <script type="text/javascript">
+  function eliminar() {
+    return confirm("Eliminar empresa?");
+  }
+  </script>
 {% endblock %}

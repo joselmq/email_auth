@@ -1,45 +1,49 @@
-from django.views.generic import ListView, DetailView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from .models import Company
-from django.urls import reverse
-from django.contrib import messages
-from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import render
+from rest_framework.generics import ListAPIView
+from rest_framework.generics import CreateAPIView
+from rest_framework.generics import DestroyAPIView
+from rest_framework.generics import UpdateAPIView
+from .serializers import CompanySerializer, InvoiceSerializer
+from .models import Company, Invoice
 
 
-class CompanyList(ListView):
-    model = Company
+# Company Views
+class ListCompanyView(ListAPIView):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
 
 
-class CompanyInfo(DetailView):
-    model = Company
+class CreateCompanyView(CreateAPIView):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
 
 
-class CompanyCreate(SuccessMessageMixin, CreateView):
-    model = Company
-    form = Company
-    fields = "__all__"
-    success_message = 'Empresa creada con éxito!'
-
-    def get_success_url(self):
-        return reverse('company')
+class UpdateCompanyView(UpdateAPIView):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
 
 
-class CompanyUpdate(SuccessMessageMixin, UpdateView):
-    model = Company
-    form = Company
-    fields = '__all__'
-    success_message = 'Empresa actualizada con éxito!'
-
-    def get_success_url(self):
-        return reverse('company')
+class DeleteCompanyView(DestroyAPIView):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
 
 
-class CompanyDelete(SuccessMessageMixin, DeleteView):
-    model = Company
-    form = Company
-    fields = '__all__'
+# Invoice Views
+class ListInvoiceView(ListAPIView):
+    queryset = Invoice.objects.all()
+    serializer_class = InvoiceSerializer
 
-    def get_success_url(self):
-        success_message = 'Empresa eliminada con éxito!'
-        messages.success(self.request, success_message)
-        return reverse('company')
+
+class CreateInvoiceView(CreateAPIView):
+    queryset = Invoice.objects.all()
+    serializer_class = InvoiceSerializer
+
+
+class UpdateInvoiceView(UpdateAPIView):
+    queryset = Invoice.objects.all()
+    serializer_class = InvoiceSerializer
+
+
+class DeleteInvoiceView(DestroyAPIView):
+    queryset = Invoice.objects.all()
+    serializer_class = InvoiceSerializer

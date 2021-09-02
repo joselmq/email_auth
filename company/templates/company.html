@@ -6,22 +6,23 @@
     {{ company.name }}
     <form method="POST" action="delete/{{company.id}}">
       {% csrf_token %}
-      <div class="btn-group">
+      <div>
         <a href="details/{{company.id}}" title="Ver" type="button" >Ver </a>
         <a href="update/{{company.id}}" title="Editar" type="button" >Editar </a>
-        <button class="btn btn-danger" onclick="return eliminar();" type="submit">Eliminar</button>
+        <button onclick="return eliminar();" type="submit">Eliminar</button>
       </div>
     </form>
-
+  {% endfor %}
+  {% if messages %}
+    <ul>
+      {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }} list-group-item list-group-item-primary"{% endif %}>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
   <script type="text/javascript">
     function eliminar() {
-      var x = confirm("Eliminar empresa?");
-      if (x) {
-        return true;
-      } else {
-        return false;
-      }
+      return confirm("Eliminar empresa?");
     }
   </script>
-  {% endfor %}
 {% endblock %}
