@@ -18,7 +18,6 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from rest_framework.authtoken import views as r_views
 
-from account import views
 from .views import HomePageView
 
 urlpatterns = [
@@ -26,7 +25,6 @@ urlpatterns = [
     path('', HomePageView.as_view(), name='home'),
     path('admin/', admin.site.urls),
     path('api/', include('account.urls')),
-    path('signup/', views.signup, name='signup'),
     path('logout/', auth_views.LogoutView.as_view(template_name='login.html'), name='logout'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('api-token-auth/', r_views.obtain_auth_token),
