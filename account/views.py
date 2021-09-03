@@ -1,13 +1,15 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from account import serializers
+from account.forms import SignUpForm
+from account.serializers import UserSerializer
 
 
 @login_required
@@ -15,18 +17,39 @@ def home(request):
     return render(request, 'home.html')
 
 
-class Signup(APIView):
-    pass
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('home')
+    else:
+        form = SignUpForm()
+    return render(request, 'signup.html', {'form': form})
+
+
+class SignUpView(APIView):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetUserInfo(APIView):
+    serializer_class = serializers.RestSerializer
 
     def get(self, request, format=None):
         an_apiview = ["hello", "there"]
         return Response({'mensaje': 'hello there', 'an_apiview': an_apiview})
 
     def post(self, request):
-        serializer = serializers.RestSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
             name = serializer.validated_data.get('name')
@@ -37,8 +60,14 @@ class GetUserInfo(APIView):
             active = user.is_active
             staff = user.is_staff
             is_superuser = user.is_superuser
+
+            print(token)
+
             users = get_user_model()
             all_users = users.objects.all()
+
+            print(all_users[0])
+
             if is_superuser:
                 return Response({'mensaje': message,
                                  'token': token[0].key,
