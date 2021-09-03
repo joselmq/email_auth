@@ -8,7 +8,6 @@ class RestSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = get_user_model()
         fields = ('id', 'username', 'password', 'email', 'first_name', 'last_name', )
@@ -20,3 +19,15 @@ class UserSerializer(serializers.ModelSerializer):
             **validated_data
         )
         return user
+
+
+class ListUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = '__all__'
+
+
+class UpdateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = '__all__'

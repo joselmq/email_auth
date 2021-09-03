@@ -1,15 +1,26 @@
-from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.shortcuts import redirect, render
+from django.shortcuts import render,redirect
 from rest_framework import status
-from rest_framework.authtoken.models import Token
+from rest_framework.generics import ListAPIView, UpdateAPIView
+from rest_framework.permissions import IsAdminUser, IsSuperuser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from account import serializers
-from account.forms import SignUpForm
 from account.serializers import UserSerializer
+from account.forms import SignUpForm
+from .serializers import ListUserSerializer, UpdateUserSerializer
+
+
+class ListUsersView(ListAPIView):
+    permission_classes = [IsAdminUser, IsSuperuser]
+    queryset = User.objects.all()
+    serializer_class = ListUserSerializer
+
+
+class UpdateUserView(UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UpdateUserSerializer
 
 
 @login_required
@@ -39,65 +50,3 @@ class SignUpView(APIView):
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class GetUserInfo(APIView):
-    serializer_class = serializers.RestSerializer
-
-    def get(self, request, format=None):
-        an_apiview = ["hello", "there"]
-        return Response({'mensaje': 'hello there', 'an_apiview': an_apiview})
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-
-        if serializer.is_valid():
-            name = serializer.validated_data.get('name')
-            message = f'Hello {name}'
-            user = User.objects.get(username=name)
-            token = Token.objects.get_or_create(user=user)
-            email = user.email
-            active = user.is_active
-            staff = user.is_staff
-            is_superuser = user.is_superuser
-
-            print(token)
-
-            users = get_user_model()
-            all_users = users.objects.all()
-
-            print(all_users[0])
-
-            if is_superuser:
-                return Response({'mensaje': message,
-                                 'token': token[0].key,
-                                 'email': email,
-                                 'active': active,
-                                 'staff': staff,
-                                 'is_superuser': is_superuser,
-                                 "Users": all_users.values('username',
-                                                           'first_name',
-                                                           'last_name',
-                                                           'email',
-                                                           'is_superuser',
-                                                           'is_staff',
-                                                           'is_active')})
-            return Response({'mensaje': message,
-                             'token': token[0].key,
-                             'email': email,
-                             'active': active,
-                             'staff': staff,
-                             'is_superuser': is_superuser})
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-    def put(self, request, pk=None):
-        return Response({'método': 'PUT'})
-
-    def patch(self, request, pk=None):
-        return Response({'método': 'PATCH'})
-
-    def delete(self, request, pk=None):
-        return Response({'método': 'DELETE'})

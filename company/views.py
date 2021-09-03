@@ -1,8 +1,4 @@
-from django.shortcuts import render
-from rest_framework.generics import ListAPIView
-from rest_framework.generics import CreateAPIView
-from rest_framework.generics import DestroyAPIView
-from rest_framework.generics import UpdateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView, UpdateAPIView
 from .serializers import CompanySerializer, InvoiceSerializer
 from .models import Company, Invoice
 
