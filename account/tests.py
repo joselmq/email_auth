@@ -1,11 +1,11 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
-from django.urls import reverse, resolve
+from django.urls import resolve, reverse
 from rest_framework import status
 from rest_framework.status import HTTP_400_BAD_REQUEST
 from rest_framework.test import APIClient, APITestCase
 
-from account.views import ListUsersView, UpdateUserView, SignUpView
+from account.views import ListUsersView, SignUpView, UpdateUserView
 
 
 class UpdateUserViewTest(APITestCase):
