@@ -13,12 +13,27 @@ class UpdateUserViewTest(APITestCase):
     def test_success(self):
         new_first_name = 'new first name'
         new_last_name = 'new last name'
-        print("self.user.pk")
+        print('self.user.pk')
         print(self.user.pk)
         response = self.client.put(
             reverse('update_user', kwargs={'pk': self.user.pk}),
-            data={"first_name": new_first_name,
-                  "last_name": new_last_name})
+            data={'first_name': new_first_name,
+                  'last_name': new_last_name})
+        self.user.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.user.first_name, new_first_name)
+
+    def test_fail(self):
+        new_first_name = 'new first name'
+        new_last_name = 'new last name'
+        username = 'newuser2'
+        print('self.user.pk')
+        print(self.user.pk)
+        response = self.client.put(
+            reverse('update_user', kwargs={'pk': self.user.pk}),
+            data={'newuser2': username,
+                  'first_name': new_first_name,
+                  'last_name': new_last_name})
         self.user.refresh_from_db()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(self.user.first_name, new_first_name)
