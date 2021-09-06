@@ -1,6 +1,8 @@
-from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView, UpdateAPIView
-from .serializers import CompanySerializer, InvoiceSerializer
+from rest_framework.generics import (CreateAPIView, DestroyAPIView,
+                                     ListAPIView, UpdateAPIView)
+
 from .models import Company, Invoice
+from .serializers import CompanySerializer, InvoiceSerializer
 
 
 # Company Views

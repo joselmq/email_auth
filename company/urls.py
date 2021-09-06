@@ -1,4 +1,5 @@
 from django.urls import path
+
 from company import views as com_views
 
 urlpatterns = [

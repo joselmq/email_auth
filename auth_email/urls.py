@@ -19,6 +19,7 @@ from django.urls import include, path
 from rest_framework.authtoken import views as r_views
 
 from account import views
+
 from .views import HomePageView
 
 urlpatterns = [

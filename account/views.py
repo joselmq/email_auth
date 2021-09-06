@@ -1,15 +1,16 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
-from rest_framework import status, mixins
+from django.shortcuts import redirect, render
+from rest_framework import mixins, status
 from rest_framework.generics import ListAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated, IsSuperuser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from account.serializers import UserSerializer
 from account.forms import SignUpForm
+from account.serializers import UserSerializer
+
 from .serializers import UpdateUserSerializer
 
 
