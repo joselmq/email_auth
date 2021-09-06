@@ -21,13 +21,14 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class ListUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = get_user_model()
-        fields = '__all__'
-
-
 class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = '__all__'
+        fields = ('first_name', 'last_name',)
+
+    # def update(self, validated_data):
+    #     print(validated_data)
+    #     user = User.objects.create_user(
+    #         **validated_data
+    #     )
+    #     return user

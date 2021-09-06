@@ -1,24 +1,25 @@
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.shortcuts import render,redirect
-from rest_framework import status
+from django.shortcuts import render, redirect
+from rest_framework import status, mixins
 from rest_framework.generics import ListAPIView, UpdateAPIView
-from rest_framework.permissions import IsAdminUser, IsSuperuser
+from rest_framework.permissions import IsAuthenticated, IsSuperuser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from account.serializers import UserSerializer
 from account.forms import SignUpForm
-from .serializers import ListUserSerializer, UpdateUserSerializer
+from .serializers import UpdateUserSerializer
 
 
 class ListUsersView(ListAPIView):
-    permission_classes = [IsAdminUser, IsSuperuser]
+    permission_classes = [IsAuthenticated, IsSuperuser]
     queryset = User.objects.all()
-    serializer_class = ListUserSerializer
+    serializer_class = UserSerializer
 
 
-class UpdateUserView(UpdateAPIView):
+class UpdateUserView(UpdateAPIView, mixins.UpdateModelMixin):
     queryset = User.objects.all()
     serializer_class = UpdateUserSerializer
 

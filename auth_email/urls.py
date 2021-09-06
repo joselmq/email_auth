@@ -24,11 +24,11 @@ from .views import HomePageView
 urlpatterns = [
     # Auth
     path('', HomePageView.as_view(), name='home'),
-    path('admin/', admin.site.urls),
-    path('api/', include('account.urls')),
+    path('admin/', admin.site.urls, name='admin'),
+    path('users/', include('account.urls'), name='users_urls'),
     path('signup/', views.signup, name='signup'),
     path('logout/', auth_views.LogoutView.as_view(template_name='login.html'), name='logout'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
-    path('api-token-auth/', r_views.obtain_auth_token),
-    path('company/', include("company.urls"))
+    path('api-token-auth/', r_views.obtain_auth_token, name='api_auth'),
+    path('company/', include("company.urls"), name='company_urls')
 ]
