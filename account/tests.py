@@ -4,8 +4,8 @@ from django.urls import resolve, reverse
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
-from account.views import ListUsersView, SignUpView, UpdateUserView
 from account.permissions import IsSuperuser
+from account.views import ListUsersView, SignUpView, UpdateUserView
 
 
 class UpdateUserViewTest(APITestCase):
