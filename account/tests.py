@@ -99,9 +99,6 @@ class TestUrls(APITestCase):
 
         self.client.login(username='username', password='password_1')
         request = self.client.get('/users/')
-        view = ListUsersView()
-        view.setup(request)
-        user = User.objects.get(username='username')
         json_content = json.loads(request.content.decode('utf-8'))
         username = json_content[0]['username']
         self.assertEqual(username, 'username')
