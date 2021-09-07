@@ -6,6 +6,7 @@ from rest_framework.test import APIClient, APITestCase
 
 from account.permissions import IsSuperuser
 from account.views import ListUsersView, SignUpView, UpdateUserView
+from rest_framework.utils import json
 
 
 class UpdateUserViewTest(APITestCase):
@@ -101,8 +102,9 @@ class TestUrls(APITestCase):
         view = ListUsersView()
         view.setup(request)
         user = User.objects.get(username='username')
-        content = b'[{"id":4,"username":"username","email":"","first_name":"jose","last_name":""}]'
-        self.assertEqual(request.content, content)
+        json_content = json.loads(request.content.decode('utf-8'))
+        username = json_content[0]['username']
+        self.assertEqual(username, 'username')
 
     def test_update_user(self):
         url = reverse('update_user', args=[str(self.user.pk)])
