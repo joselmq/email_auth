@@ -21,6 +21,7 @@ class ListUsersView(ListAPIView):
 
 
 class UpdateUserView(UpdateAPIView, mixins.UpdateModelMixin):
+    permission_classes = [IsAuthenticated, IsSuperuser]
     queryset = User.objects.all()
     serializer_class = UpdateUserSerializer
 

@@ -32,3 +32,4 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     #         **validated_data
     #     )
     #     return user
+
