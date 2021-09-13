@@ -12,17 +12,21 @@ from rest_framework.utils import json
 class UpdateUserViewTest(APITestCase):
 
     def setUp(self) -> None:
-        self.user = User.objects.create_user(username='username', password='password_1', first_name='jose')
+        self.user = User.objects.create_user(
+            username='username',
+            password='password_1',
+            first_name='jose')
         self.user.is_superuser = True
         self.user.save()
-        self.user_not_superuser = User.objects.create_user(username='username2',
-                                                           password='password_1',
-                                                           first_name='jose')
+        self.user_not_superuser = User.objects.create_user(
+            username='username2',
+            password='password_1',
+            first_name='jose')
         self.user_not_superuser.save()
         self.client = APIClient()
 
     def test_update_success(self):
-        self.client.login(username='username', password='password_1')
+        self.client.force_authenticate(self.user)
         new_first_name = 'new first name'
         new_last_name = 'new last name'
         response = self.client.put(
@@ -34,46 +38,33 @@ class UpdateUserViewTest(APITestCase):
         self.assertEqual(self.user.first_name, new_first_name)
 
     def test_update_fail(self):
-        self.client.login(username='username2', password='password_1')
+        self.client.force_authenticate(self.user_not_superuser)
         new_last_name = 'new last name'
         response = self.client.put(
             reverse('update_user', kwargs={'pk': self.user.pk}),
             data={'last_name': new_last_name})
-        self.user.refresh_from_db()
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
 
 class PermissionsTest(TestCase):
 
     def setUp(self) -> None:
-        self.user = User.objects.create_user(username='username',
-                                             password='password_1',
-                                             first_name='jose')
+        self.user = User.objects.create_user(
+            username='username',
+            password='password_1',
+            first_name='jose')
         self.user.is_superuser = True
         self.user.save()
-        self.user_not_superuser = User.objects.create_user(username='username2',
-                                                           password='password_1',
-                                                           first_name='jose')
+        self.user_not_superuser = User.objects.create_user(
+            username='username2',
+            password='password_1',
+            first_name='jose')
         self.user_not_superuser.save()
         self.client = APIClient()
 
     def test_is_superuser_fail(self):
-        self.client.login(username='username', password='password_1')
-        # With URLS
-        admin_pages = [
-            "/admin/",
-            "/admin/auth/",
-            "/admin/auth/group/",
-            "/admin/auth/group/add/",
-            "/admin/auth/user/",
-            "/admin/auth/user/add/",
-            "/admin/password_change/"
-        ]
-        for page in admin_pages:
-            response = self.client.get(page)
-            self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.client.force_authenticate(self.user)
 
-        # With RequestFactory
         request = RequestFactory()
         request.user = self.user
 
@@ -88,20 +79,20 @@ class TestUrls(APITestCase):
 
     def setUp(self) -> None:
         self.factory = RequestFactory()
-        self.user = User.objects.create_user(username='username', password='password_1', first_name='jose')
+        self.user = User.objects.create_user(
+            username='username',
+            password='password_1',
+            first_name='jose')
         self.user.is_superuser = True
         self.user.save()
-        self.client = APIClient()
 
     def test_list_users(self):
         url = reverse('list_users')
+        self.client.force_authenticate(self.user)
+        response = self.client.get(url)
         self.assertEqual(resolve(url).func.view_class, ListUsersView)
-
-        self.client.login(username='username', password='password_1')
-        request = self.client.get('/users/')
-        json_content = json.loads(request.content.decode('utf-8'))
-        username = json_content[0]['username']
-        self.assertEqual(username, 'username')
+        self.assertEqual(User.objects.all().count(), len(response.data))
+        self.assertEqual(response.data[0]['username'], 'username')
 
     def test_update_user(self):
         url = reverse('update_user', args=[str(self.user.pk)])
@@ -110,3 +101,15 @@ class TestUrls(APITestCase):
     def test_add_user(self):
         url = reverse('add_user')
         self.assertEqual(resolve(url).func.view_class, SignUpView)
+
+
+class SignUpViewTest(APITestCase):
+    def test_success(self):
+        response = self.client.post(
+            reverse('add_user'),
+            data={'username': 'username_123',
+                  'email': 'email@em.ail',
+                  'password': 'password_1',
+                  'first_name': 'José',
+                  'last_name': 'Martínez'})
+        self.assertEqual(response, status.HTTP_201_CREATED)
